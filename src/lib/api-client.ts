@@ -23,6 +23,11 @@ function extractMessage(body: unknown, fallback: string): string {
 async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
+    /**
+     * 인증은 쿠키가 아닌 Authorization 헤더의 JWT 로 이뤄지므로 쿠키를 주고받을 필요가 없다.
+     * 백엔드도 credentials 를 허용하지 않으므로(enableCors 기본값) 여기서도 명시적으로 맞춘다.
+     */
+    credentials: "omit",
     headers: {
       "Content-Type": "application/json",
       ...options.headers,
