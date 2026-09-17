@@ -1,78 +1,82 @@
-# React + TypeScript + Vite
+# todo-frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite로 만든 할 일 관리 앱 프론트엔드입니다. Tauri로 감싸서 Windows 데스크톱 앱과 모바일(Android/iOS) 앱도 빌드할 수 있습니다.
 
-Currently, two official plugins are available:
+## 필요한 것
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- [Node.js](https://nodejs.org/) 20 이상 (`node -v` 로 확인)
+- npm (Node.js 설치 시 함께 설치됨)
+- 백엔드 API 서버 (로그인/회원가입 등 인증 기능을 쓰려면 필요, 기본값 `http://localhost:3000`)
+- (선택) Windows 데스크톱 앱을 실행/빌드하려면 [Rust](https://www.rust-lang.org/tools/install) 툴체인
+- (선택) 모바일 앱을 실행/빌드하려면 Android Studio(Android) 또는 Xcode(iOS, macOS 전용)
 
-## React Compiler
+## 1. 설치
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-You can also try [the experimental native React Compiler support in plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md#rust-react-compiler) by using `compiler: true` in the plugin options instead of using the Babel plugin.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+git clone <이 저장소 URL>
+cd todo-frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## 2. 환경 변수 설정
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+`.env.example` 을 복사해 `.env` 파일을 만들고, 백엔드 API 주소를 지정합니다.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+cp .env.example .env
 ```
+
+```env
+VITE_API_URL=http://localhost:3000
+```
+
+백엔드 서버 주소가 다르면 이 값을 바꿔주세요. (백엔드 없이 화면 구조만 보고 싶다면 이 단계는 건너뛰어도 되지만, 로그인/회원가입은 실패합니다.)
+
+## 3. 개발 서버 실행 (웹)
+
+```bash
+npm run dev
+```
+
+터미널에 뜨는 주소(기본 `http://localhost:5173`)를 브라우저로 열면 됩니다.
+
+## 4. 그 외 명령어
+
+```bash
+npm run lint      # ESLint 검사
+npm run build     # 타입체크 + 프로덕션 빌드 (dist/ 생성)
+npm run preview   # 빌드 결과물 로컬 미리보기
+```
+
+## 5. 데스크톱 앱으로 실행 (Tauri / Windows)
+
+Rust 툴체인이 설치되어 있어야 합니다.
+
+```bash
+npm run tauri:dev     # 개발 모드로 데스크톱 창 띄우기
+npm run tauri:build   # Windows 설치 파일(.msi 등) 빌드
+```
+
+## 6. 모바일 앱으로 실행 (Tauri / Android, iOS)
+
+최초 1회, 각 플랫폼 프로젝트를 생성해야 합니다.
+
+```bash
+npx tauri android init   # Android Studio/SDK 필요
+npx tauri ios init        # Xcode 필요, macOS 전용
+```
+
+이후 실행/빌드:
+
+```bash
+npx tauri android dev     # 에뮬레이터/실기기에서 실행
+npx tauri android build   # APK/AAB 빌드
+
+npx tauri ios dev
+npx tauri ios build
+```
+
+## 문제 해결
+
+- **로그인/회원가입이 안 돼요**: `.env` 의 `VITE_API_URL` 이 실제로 떠 있는 백엔드 서버를 가리키는지 확인하세요.
+- **`npm run build` 에서 타입 에러가 나요**: 저장소에 알려진 사소한 TypeScript 버전 관련 이슈가 있습니다. `npm run dev` 나 `npx vite build` (타입체크 생략)로 우회할 수 있습니다.
