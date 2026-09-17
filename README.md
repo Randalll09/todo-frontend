@@ -4,7 +4,7 @@ React + TypeScript + Vite로 만든 할 일 관리 앱 프론트엔드입니다.
 
 ## 필요한 것
 
-- [Node.js](https://nodejs.org/) 20 이상 (`node -v` 로 확인)
+- [Node.js](https://nodejs.org/) 22.12 이상 (또는 24.x) — `@rolldown/plugin-babel` 이 요구합니다 (`node -v` 로 확인)
 - npm (Node.js 설치 시 함께 설치됨)
 - 백엔드 API 서버 (로그인/회원가입 등 인증 기능을 쓰려면 필요, 기본값 `http://localhost:3000`)
 - (선택) Windows 데스크톱 앱을 실행/빌드하려면 [Rust](https://www.rust-lang.org/tools/install) 툴체인
@@ -80,3 +80,11 @@ npx tauri ios build
 
 - **로그인/회원가입이 안 돼요**: `.env` 의 `VITE_API_URL` 이 실제로 떠 있는 백엔드 서버를 가리키는지 확인하세요.
 - **`npm run build` 에서 타입 에러가 나요**: 저장소에 알려진 사소한 TypeScript 버전 관련 이슈가 있습니다. `npm run dev` 나 `npx vite build` (타입체크 생략)로 우회할 수 있습니다.
+- **`npm i` 가 `EBADENGINE` 경고와 함께 `ENOTEMPTY: directory not empty, rename ...node_modules/acorn ...` 에러로 실패해요**: Node 버전이 낮거나(22.12 미만) 이전 설치가 중간에 중단되어 `node_modules` 가 꼬인 상태입니다. 아래처럼 완전히 지우고 다시 설치하세요.
+
+  ```bash
+  rm -rf node_modules package-lock.json
+  npm install
+  ```
+
+  그래도 같은 에러가 나면 Node 버전을 22.12 이상으로 올린 뒤 다시 시도하세요(예: `nvm install 22 && nvm use 22`).
